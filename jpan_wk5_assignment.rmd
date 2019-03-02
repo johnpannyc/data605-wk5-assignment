@@ -1,0 +1,80 @@
+---
+title: "data 605 wk5 assignment"
+author: "Jun Pan"
+date: "March 2, 2019"
+output: html_document
+---
+```{r}
+library(MASS)
+```
+
+
+Choose independently two numbers B and C at random from the interval [0, 1] with uniform density. Prove that B and C are proper probability distributions.   Note that the point (B,C) is then chosen at random in the unit square. 
+ Find the probability that 
+(a) B + C < 1/2. 
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+B <- runif(1000, min = 0, max = 1)
+C <- runif(1000, min = 0, max = 1)
+
+X <- B + C
+plot(density(X))
+shapiro.test(X)
+qqnorm(X)
+qqline(X, col = 2)
+hist(X)
+```
+I utalized the shapiro-wilk test and qqplots to show that X is a normal distribution.  Base on the x distribution on the graph, the X < 1/2 is equal to 0.5/2 = 0.125
+ 
+ 
+(b) BC < 1/2. 
+```{r}
+Y <- B * C
+fit1 <- fitdistr(Y, "exponential")
+
+hist_Y <- hist(Y, freq = FALSE, breaks = 10, xlim = c(0, quantile(Y, 0.99)))
+curve(dexp(x, rate = fit1$estimate), col = "red", add = TRUE)
+
+hist_density <- sum(hist_Y$density * .1)
+hist_density_0.5 <- sum(hist_Y$density[1:5]*.1)
+hist_density_0.5
+```
+ 
+ The Y distribution is exponential distribution.  The probability of BC < 1/2 is 0.845
+ 
+
+
+
+
+(c) |B ??? C| < 1/2. 
+ 
+```{r}
+Z <- abs(B-C)
+hist(Z)
+#Looking the plot, we can estimate the function f(x) = -200x + 200
+int.fun <- function(x){-200*x + 200}
+Pro_0.5 <- integrate(int.fun, lower = 0, upper = 0.5)
+Pro_0.5
+```
+ Because the cdf of |B-C| between 0 and 1 is given by F(z)=1-(1-z)^2, then by plugging in 1/2 and 0 for z and substracting, we got 0.75.
+ 
+
+
+(d) max{B,C} < 1/2. 
+Since B and C are normal distribution
+$$\\P(max\{B,C\}) = P(B\leqslant\frac{1}{2}) * P(C\leqslant\frac{1}{2})
+\\= 0.5 * 0.5
+\\= 0.25
+$$
+ 
+ 
+
+
+
+(e) min{B,C} < 1/2. 
+ 
+$$\\P(min\{B,C\}) = 1 - P(max\{B,C\})
+\\= 1 - 0.25
+\\= 0.75
+$$ 
+ 
